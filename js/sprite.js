@@ -1,6 +1,7 @@
 
 (function() {
-    function Sprite(url, pos, size, speed, frames, dir, once) {
+    function Sprite(scale, url, pos, size, speed, frames, dir, once) {
+    	this.scale = scale;
         this.pos = pos;
         this.size = size;
         this.speed = typeof speed === 'number' ? speed : 0;
@@ -48,7 +49,7 @@
                           x, y,
                           this.size[0], this.size[1],
                           0, 0,
-                          this.size[0], this.size[1]);
+                          this.size[0] * this.scale, this.size[1] * this.scale);
         }
     };
 
