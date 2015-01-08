@@ -1,10 +1,11 @@
 
 (function() {
-    function Particle(pos, size, vel, acc) {
+    function Particle(pos, size, vel, acc, mass) {
         this.pos = pos;
         this.size = size;
         this.vel = vel
         this.acc = acc;
+        this.mass = mass;
     };
 
     Particle.prototype = {
@@ -14,6 +15,19 @@
             
             this.vel[0] += this.acc[0] * dt;
             this.vel[1] += this.acc[1] * dt;
+        },
+        
+        EncounteredFriction: function(dt, friction) {
+	        this.vel[0] *= (1 - friction * dt);
+            this.vel[1] *= (1 - friction * dt);
+            
+            if (Math.abs(this.vel[0]) < .1) {this.vel[0] = 0;}
+            if (Math.abs(this.vel[1]) < .1) {this.vel[1] = 0;}
+        },
+        
+        AddForce: function(Force) {
+	        this.vel[0] += Force[0];
+            this.vel[1] += Force[1];
         }
     };
 
@@ -22,9 +36,10 @@
 
 
 (function() {
-    function Box(pos, size) {
+    function Box(pos, size, friction) {
         this.pos = pos;
         this.size = size;
+        this.friction = friction;
     };
 
     Box.prototype = {

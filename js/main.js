@@ -29,7 +29,7 @@ resources.onReady(init);
 var PlayerSpeed = 75; // Pixels per second
 var player = {
     sprite: new Sprite(.2, 'img/Man.png', [0, 0], [252, 592], 0),
-    Physics: new Particle([0, 0], [252 * .2, 592 * .2], [0, 0], [0, -982]) // Pos, Size, Val, Acc
+    Physics: new Particle([0, 0], [252 * .2, 592 * .2], [0, 0], [0, -982], 80) // Pos, Size, Val, Acc, Mass[kg]
 };
 
 // The Level
@@ -38,19 +38,19 @@ var Level = {
 	Boxes: [
 		{
 			sprite: new Sprite(5, 'img/terrain.png', [0, 0], [20, 20], 0),
-			Physics: new Box([0, 500], [100, 100])
+			Physics: new Box([0, 500], [100, 100], 2)
 		}, {
 			sprite: new Sprite(5, 'img/terrain.png', [0, 0], [20, 20], 0),
-			Physics: new Box([100, 500], [100, 100])
+			Physics: new Box([100, 500], [100, 100], 2)
 		}, {
 			sprite: new Sprite(5, 'img/terrain.png', [0, 0], [20, 20], 0),
-			Physics: new Box([200, 500], [100, 100])
+			Physics: new Box([200, 500], [100, 100], 2)
 		}, {
 			sprite: new Sprite(5, 'img/terrain.png', [0, 0], [20, 20], 0),
-			Physics: new Box([300, 500], [100, 100])
+			Physics: new Box([300, 500], [100, 100], 2)
 		}, {
 			sprite: new Sprite(5, 'img/terrain.png', [0, 0], [20, 20], 0),
-			Physics: new Box([400, 500], [100, 100])
+			Physics: new Box([400, 500], [100, 100], 2)
 		}
 	]
 };
@@ -103,7 +103,7 @@ function handleInput(dt) {
 
     if(input.isDown('LEFT') || input.isDown('a')) {
         //Left
-        //player.pos[0] -= dt * PlayerSpeed;
+        player.Physics.AddForce([10, 0]);
     }
 
     if(input.isDown('RIGHT') || input.isDown('d')) {
@@ -122,6 +122,7 @@ function updateEntities(dt) {
 
 function updatePhysics(dt) {
     // Player update
+    var Friction = 0;
     for (var i = 2; i < 129; i *= 2) {
     	var PlayerCopy = player;
     	player.Physics.update(dt / i);
@@ -129,6 +130,7 @@ function updatePhysics(dt) {
 	    for (var ii = 0; ii < Level.BoxCount; ii ++) {
 	    	if (Level.Boxes[ii].Physics.checkForCollisionWithBox(player.Physics)) {
 		    	intersection = true;
+		    	Friction = Level.Boxes[ii].Physics.friction;
 	    	}
 	    }
 	    if (intersection) {
@@ -136,6 +138,7 @@ function updatePhysics(dt) {
 		    player.Physics.vel[1] = 0;
 	    }
     }
+    player.Physics.EncounteredFriction(dt, Friction);
 }
 
 // Draw everything
